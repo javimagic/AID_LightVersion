@@ -23,7 +23,9 @@ public class ControlPanel : MonoBehaviour {
     KeyCode TurnRight = KeyCode.E;
     [SerializeField]
     KeyCode MusicOffOn = KeyCode.M;
-    
+    [SerializeField]
+    KeyCode Interact = KeyCode.J;
+
     private KeyCode[] keyCodes;
 
     public Action<PressedKeyCode[]> KeyPressed;
@@ -37,7 +39,8 @@ public class ControlPanel : MonoBehaviour {
                             Left,
                             Right,
                             TurnLeft,
-                            TurnRight
+                            TurnRight,
+                            Interact
                         };
 
     }
@@ -69,6 +72,6 @@ public class ControlPanel : MonoBehaviour {
                 MusicSound.volume = 1;
                 MusicSound.Play();
         }
-      
+        
 	}
 }
