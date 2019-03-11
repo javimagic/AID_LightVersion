@@ -11,6 +11,7 @@ public class HelicopterController : MonoBehaviour
     public HeliRotorController SubRotorController;
     public VictimInteractionBoundary victimBoundary;
     public GameObject victim;
+    public bool controllingThisHelicopter = true;
     
     public float TurnForce = 5f;    // Turn torque due to tilt-x (hMove.x)   Original: 3
     public float ForwardForce = 10f;   // Forward force due to tilt-y (hMove.y)
@@ -47,7 +48,8 @@ public class HelicopterController : MonoBehaviour
 	void Start ()
 	{
         ControlPanel.KeyPressed += OnKeyPressed;
-	}
+        controllingThisHelicopter = true;
+    }
 
 	void Update () {
 	}
@@ -130,71 +132,74 @@ public class HelicopterController : MonoBehaviour
         else
             if (hMove.x < 0)
                 tempX = Time.fixedDeltaTime;
-        
 
 
-        foreach (var pressedKeyCode in obj)
+        if (controllingThisHelicopter)
         {
-            switch (pressedKeyCode)
+            foreach (var pressedKeyCode in obj)
             {
-                case PressedKeyCode.SpeedUpPressed:
+                switch (pressedKeyCode)
+                {
+                    case PressedKeyCode.SpeedUpPressed:
 
-                    EngineForce += 0.1f;
-                    if (EngineForce > maxEngineForce) EngineForce = maxEngineForce;
-                    // Debug.Log(EngineForce);
-                    break;
-                case PressedKeyCode.SpeedDownPressed:
+                        EngineForce += 0.1f;
+                        if (EngineForce > maxEngineForce) EngineForce = maxEngineForce;
+                        // Debug.Log(EngineForce);
+                        break;
+                    case PressedKeyCode.SpeedDownPressed:
 
-                    EngineForce -= 0.12f;
-                    if (EngineForce < 0) EngineForce = 0;
-                    // Debug.Log(EngineForce);
-                    break;
+                        EngineForce -= 0.12f;
+                        if (EngineForce < 0) EngineForce = 0;
+                        // Debug.Log(EngineForce);
+                        break;
 
                     case PressedKeyCode.ForwardPressed:
 
-                    if (IsOnGround) break;
-                    tempY = Time.fixedDeltaTime;
-                    break;
+                        if (IsOnGround) break;
+                        tempY = Time.fixedDeltaTime;
+                        break;
                     case PressedKeyCode.BackPressed:
 
-                    if (IsOnGround) break;
-                    tempY = -Time.fixedDeltaTime;
-                    break;
+                        if (IsOnGround) break;
+                        tempY = -Time.fixedDeltaTime;
+                        break;
                     case PressedKeyCode.LeftPressed:
 
-                    if (IsOnGround) break;
-                    tempX = -Time.fixedDeltaTime;
-                    break;
+                        if (IsOnGround) break;
+                        tempX = -Time.fixedDeltaTime;
+                        break;
                     case PressedKeyCode.RightPressed:
 
-                    if (IsOnGround) break;
-                    tempX = Time.fixedDeltaTime;
-                    break;
+                        if (IsOnGround) break;
+                        tempX = Time.fixedDeltaTime;
+                        break;
                     case PressedKeyCode.TurnRightPressed:
-                    {
-                        if (IsOnGround) break;
-                        var force = (turnForcePercent - Mathf.Abs(hMove.y))*HelicopterModel.mass * EngineForce / maxEngineForce;
-                        HelicopterModel.AddRelativeTorque(0f, force, 0);
-                    }
-                    break;
+                        {
+                            if (IsOnGround) break;
+                            var force = (turnForcePercent - Mathf.Abs(hMove.y)) * HelicopterModel.mass * EngineForce / maxEngineForce;
+                            HelicopterModel.AddRelativeTorque(0f, force, 0);
+                        }
+                        break;
                     case PressedKeyCode.TurnLeftPressed:
-                    {
-                        if (IsOnGround) break;
-                        
-                        var force = -(turnForcePercent - Mathf.Abs(hMove.y))*HelicopterModel.mass * EngineForce / maxEngineForce;
-                        HelicopterModel.AddRelativeTorque(0f, force, 0);
-                    }
-                    break;
+                        {
+                            if (IsOnGround) break;
+
+                            var force = -(turnForcePercent - Mathf.Abs(hMove.y)) * HelicopterModel.mass * EngineForce / maxEngineForce;
+                            HelicopterModel.AddRelativeTorque(0f, force, 0);
+                        }
+                        break;
 
                     case PressedKeyCode.InteractPressed:
-                    {
-                        if (victimBoundary.playerNearby) {
-                            Debug.Log("Rescued!!!");
-                            Destroy(victim);
+                        {
+                            if (victimBoundary.playerNearby)
+                            {
+                                Debug.Log("Rescued!!!");
+                                Destroy(victim);
+                            }
                         }
-                    }
-                    break;
+                        break;
 
+                }
             }
         }
 

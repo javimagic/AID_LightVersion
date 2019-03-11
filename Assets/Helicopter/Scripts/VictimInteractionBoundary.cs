@@ -13,6 +13,8 @@ public class VictimInteractionBoundary : MonoBehaviour {
 
     void OnTriggerExit(Collider other)
     {
-        playerNearby = false;
+        if (other.tag == "Player") {
+            playerNearby = false;
+        }
     }
 }
