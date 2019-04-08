@@ -74,7 +74,7 @@ public class ControlChanger : MonoBehaviour
             if (victimReckon.GetComponent<VictimRecognition>().victimDetected)
             {
                 victimDetected = true;
-                controlHelicopter();
+                // controlHelicopter();
             }
         }
         if (!insideAproxZone)
@@ -82,7 +82,7 @@ public class ControlChanger : MonoBehaviour
             if (aproxZone.GetComponent<VictimInteractionBoundary>().playerNearby)
             {
                 insideAproxZone = true;
-                controlDrone();
+                // controlDrone();
             }
         }
     }

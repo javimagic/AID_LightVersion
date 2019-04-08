@@ -27,6 +27,10 @@ public class HelicopterController : MonoBehaviour
 
     private float _engineForce;
     public float maxEngineForce = 30;
+    public float EngineForce = 0f;
+
+
+    /*
     public float EngineForce
     {
         get { return _engineForce; }
@@ -41,6 +45,7 @@ public class HelicopterController : MonoBehaviour
             _engineForce = value;
         }
     }
+    */
 
     private Vector2 hMove = Vector2.zero;
     private Vector2 hTilt = Vector2.zero;
@@ -53,7 +58,7 @@ public class HelicopterController : MonoBehaviour
     // Use this for initialization
 	void Start ()
 	{
-       
+        EngineForce = 0f;
         controllingThisHelicopter = true;
     }
 
@@ -97,6 +102,11 @@ public class HelicopterController : MonoBehaviour
         float stabilityForce = 150f;
         float xAng, zAng;
 
+        // Engine Force:
+        MainRotorController.RotarSpeed = EngineForce * 80;
+        SubRotorController.RotarSpeed = EngineForce * 40;
+        HelicopterSound.pitch = Mathf.Clamp(EngineForce / 40, 0, 1.2f);
+
         // Stability Torque:
         xAng = HelicopterModel.transform.localEulerAngles.x;
         if (xAng > 180) xAng -= 360;
@@ -105,7 +115,7 @@ public class HelicopterController : MonoBehaviour
         if (zAng > 180) zAng -= 360;
         zAng *= -1;
         Vector3 stabilityVector = new Vector3(xAng * stabilityTorqueX, 0.0f, zAng * stabilityTorqueZ);
-        // Debug.Log(stabilityVector);
+        // Debug.Log(Mathf.Pow(EngineForce / maxEngineForce, 0.3f));
         HelicopterModel.AddRelativeTorque(stabilityVector * Mathf.Pow(EngineForce / maxEngineForce, 0.3f));
 
         // Stability Force:
