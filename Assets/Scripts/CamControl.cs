@@ -5,37 +5,48 @@ using UnityEngine;
 public class CamControl : MonoBehaviour
 {
 
-    public Camera camera;
+    public Camera camera1;
     public Camera camera2;
     public Camera camera3;
+    public Camera explosionCamera;
+
     // Use this for initialization
     void Start()
     {
-        camera.enabled = true;
+        camera1.enabled = true;
         camera2.enabled = false;
         camera3.enabled = false;
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        if (Input.GetKeyDown("1"))
+        if (GameObject.Find("Player"))
         {
-            camera.enabled = true;
-            camera2.enabled = false;
-            camera3.enabled = false;
+            if (Input.GetKeyDown("1"))
+            {
+                camera1.enabled = true;
+                camera2.enabled = false;
+                camera3.enabled = false;
+            }
+            if (Input.GetKeyDown("2"))
+            {
+                camera1.enabled = false;
+                camera2.enabled = true;
+                camera3.enabled = false;
+            }
+            if (Input.GetKeyDown("3"))
+            {
+                camera1.enabled = false;
+                camera2.enabled = false;
+                camera3.enabled = true;
+            }
         }
-        if (Input.GetKeyDown("2"))
+        /*
+        else
         {
-            camera.enabled = false;
-            camera2.enabled = true;
-            camera3.enabled = false;
+            explosionCamera.enabled = true;
         }
-        if (Input.GetKeyDown("3"))
-        {
-            camera.enabled = false;
-            camera2.enabled = false;
-            camera3.enabled = true;
-        }
+        */
     }
 }
