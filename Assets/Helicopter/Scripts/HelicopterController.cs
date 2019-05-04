@@ -10,10 +10,18 @@ public class HelicopterController : MonoBehaviour
     public HeliRotorController MainRotorController;
     public HeliRotorController SubRotorController;
     public VictimInteractionBoundary victimBoundary;
+    public ControlChanger changer;
     public GameObject victim;
     public bool controllingThisHelicopter = true;
+    public bool helicopterIsAlive = true;
     public float autoStability = 0.4f;
-    
+    public float PID_P = 1f;
+    public float PID_I = 1f;
+    public float PID_D = 1f;
+    private float error = 0f, lastError = 0f, sumErrors = 0f;
+    private bool wasControllingHeli = true;
+    public PauseMenu pauseMenu;
+
     public float TurnForce = 5f;    // Turn torque due to tilt-x (hMove.x)   Original: 3
     public float ForwardForce = 10f;   // Forward force due to tilt-y (hMove.y)
     public float upwardsPowerForce = 2.0f;
@@ -29,6 +37,10 @@ public class HelicopterController : MonoBehaviour
     public float maxEngineForce = 30;
     public float EngineForce = 0f;
 
+    private Vector2 hMove = Vector2.zero;
+    private float stdVolume;
+
+    private CountDown timer;
 
     /*
     public float EngineForce
@@ -45,11 +57,14 @@ public class HelicopterController : MonoBehaviour
             _engineForce = value;
         }
     }
-    */
+    
 
-    private Vector2 hMove = Vector2.zero;
+    
     private Vector2 hTilt = Vector2.zero;
     private float hTurn = 0f;
+
+    */
+
     public bool IsOnGround = true;
 
 
@@ -58,8 +73,10 @@ public class HelicopterController : MonoBehaviour
     // Use this for initialization
 	void Start ()
 	{
+        timer = victim.GetComponent<CountDown>();
         EngineForce = 0f;
         controllingThisHelicopter = true;
+        stdVolume = HelicopterSound.volume;
     }
 
     void useControls ()
@@ -70,7 +87,6 @@ public class HelicopterController : MonoBehaviour
         // float throttle = 0.1f; // provisional, porque no va hoy el mando
         bool turnright = Input.GetButton("PS4_R1");
         bool turnleft = Input.GetButton("PS4_L1");
-        bool pause = Input.GetButton("PS4_option");
         bool interaction = Input.GetButton("PS4_X");
 
         EngineForce = Mathf.Lerp(EngineForce, maxEngineForce * (0.1f + throttle) * 5f, Time.fixedDeltaTime);
@@ -88,19 +104,34 @@ public class HelicopterController : MonoBehaviour
         }
         if (interaction)
         {
-            if (victimBoundary.playerNearby)
+            if (victimBoundary.playerNearby && timer.victimIsAlive)
             {
-                Debug.Log("Rescued!!!");
-                Destroy(victim);
+                // Debug.Log("Rescued!!!");
+                timer.victimGoesIn();
+                Destroy(victim.transform.Find("Person").gameObject);
             }
         }
     }
 
-	void FixedUpdate () {
+    private void Update()
+    {
+        HelicopterSound.volume = (!pauseMenu.gamePaused && helicopterIsAlive) ? stdVolume : 0f;
+    }
+
+    void FixedUpdate () {
         float stabilityTorqueX = 5.0f;
         float stabilityTorqueZ = 10.0f;
         float stabilityForce = 150f;
         float xAng, zAng;
+
+        if (!helicopterIsAlive) return;
+
+        if (wasControllingHeli && !controllingThisHelicopter) {
+            error = 0f;
+            lastError = 0f;
+            sumErrors = 0f;
+        }
+        wasControllingHeli = controllingThisHelicopter;
 
         // Engine Force:
         MainRotorController.RotarSpeed = EngineForce * 80;
@@ -127,21 +158,37 @@ public class HelicopterController : MonoBehaviour
             useControls();
         } else
         {
-            EngineForce = Mathf.Lerp(EngineForce, EngineForce - GetComponent<Rigidbody>().velocity.y, Time.fixedDeltaTime * autoStability);
-            Mathf.Clamp(EngineForce, 0, maxEngineForce);
+
+            // EngineForce = Mathf.Lerp(EngineForce, EngineForce - GetComponent<Rigidbody>().velocity.y, Time.fixedDeltaTime * autoStability);
+            EngineForce -= PID(changer.lastHeight, transform.position.y);
+            EngineForce = Mathf.Clamp(EngineForce, 0, maxEngineForce);
         }
         
         LiftProcess();
         MoveProcess();
         TiltProcess();
-        if (Input.GetButton("PS4_option"))
+        if (Input.GetButton("PS4_PSN"))
         {
-            SceneManager.LoadScene("MainMenu");
+            SceneManager.LoadScene("AIDS_Menu");
         }
 
     }
   
     
+    private float PID (float target, float actual) {
+        float correction;
+        lastError = error;
+        error = target - actual;
+        sumErrors += error;
+        
+        correction = PID_P * (actual - target);
+        correction -= PID_I * sumErrors;
+        correction -= PID_D * (error - lastError);
+        // Debug.Log("P = " + PID_P * (actual - target) + "; I = " + -PID_I * sumErrors + "; D = " + -PID_D * (error - lastError));
+        return correction;
+    }
+
+
     private void MoveProcess()   // Turn due to tilt-x and forward due to tilt-y. RIGHT
     {
         var turn = TurnForce * hMove.x * (turnTiltForcePercent - Mathf.Abs(hMove.y)) * HelicopterModel.mass * EngineForce / maxEngineForce;

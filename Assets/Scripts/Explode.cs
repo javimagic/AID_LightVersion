@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class Explode : MonoBehaviour
 {
+    public GameOver gameOver;
     public GameObject targetToDestroy;
+    public HelicopterController heliController;
     public GameObject followCamera;
     public GameObject explosionCamera;
     public GameObject explosion;
@@ -23,12 +25,15 @@ public class Explode : MonoBehaviour
     {
         if (other.tag != "Drone" && other.tag != "VictimArea" && other.tag != "VictimReckon")
         {
-            Destroy(targetToDestroy);
+            // Destroy(targetToDestroy);
+            heliController.helicopterIsAlive = false;
             followCamera.GetComponent<FollowTargetCamera>().enabled = false;
             explosionCamera.GetComponent<ExplosionCamera>().enabled = false;
             GameObject instantiatedExplosion = Instantiate(explosion, transform.position, transform.rotation);
             instantiatedExplosion.transform.localScale = new Vector3(1f, 1f, 1f) * explosionSize;
             flag.hasExploded = true;
+            gameOver.gameOverText = "Vehículo destruido";
+            gameOver.enabled = true;
         }
     }
 }

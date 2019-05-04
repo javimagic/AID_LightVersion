@@ -10,7 +10,8 @@ public class ControlChanger : MonoBehaviour
     public Camera heliCam;
     public Camera droneCam;
     public GameObject victimReckon;
-    private bool controllingHeli = true;
+    public float lastHeight;
+    public bool controllingHeli = true;
     private bool victimDetected = false;
     private bool insideAproxZone = false;
     private Vector3 offset;
@@ -30,6 +31,7 @@ public class ControlChanger : MonoBehaviour
     void controlDrone()
     {
         helicopter.GetComponent<HelicopterController>().controllingThisHelicopter = false;
+        lastHeight = helicopter.transform.position.y;
         if (!drone.activeSelf) {
             drone.transform.position = helicopter.transform.position + offset;
             drone.transform.localEulerAngles = new Vector3(

@@ -9,6 +9,7 @@ public class FollowDroneCamera : MonoBehaviour
     public float horizontalOffset = 2f;
     public float verticalOffset = 0.75f;
     public GameObject VictimReconCol;
+    public ControlChanger changer;
 
 
     void Start()
@@ -32,7 +33,9 @@ public class FollowDroneCamera : MonoBehaviour
 
         // -------- Victim Recognition Collider readjustment --------------
 
-        Quaternion colliderOrientation = Quaternion.LookRotation(goalPosition - transform.position);
-        VictimReconCol.transform.rotation = transform.rotation;
+        if (!changer.controllingHeli) {
+            Quaternion colliderOrientation = Quaternion.LookRotation(goalPosition - transform.position);
+            VictimReconCol.transform.rotation = transform.rotation;
+        }
     }
 }
