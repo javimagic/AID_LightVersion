@@ -7188,7 +7188,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameOver: {fileID: 1677841585}
-  startTime: 5
+  startTime: 110
   victimIsAlive: 1
   victimAboard: 0
   timer: {fileID: 1016470343}
@@ -9558,10 +9558,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c2fd3132e26727469da00150f34d4d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  victim1: {fileID: 1527849805864142}
-  victim2: {fileID: 1020710160}
-  victim3: {fileID: 391641654}
   gameOver: {fileID: 1677841585}
+  victims:
+  - {fileID: 1527849805864141}
+  - {fileID: 1020710159}
+  - {fileID: 391641653}
   helicopterController: {fileID: 114474071119609301}
 --- !u!1 &537477303
 GameObject:
@@ -17350,7 +17351,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameOver: {fileID: 1677841585}
-  startTime: 3
+  startTime: 100
   victimIsAlive: 1
   victimAboard: 0
   timer: {fileID: 1005321346}
@@ -28828,6 +28829,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ambientLight: {fileID: 170076734}
+  numVictims: 3
+  victims:
+  - {fileID: 1527849805864141}
+  - {fileID: 1020710159}
+  - {fileID: 391641653}
+  timers:
+  - {fileID: 1042287014}
+  - {fileID: 1005321346}
+  - {fileID: 1016470343}
 --- !u!114 &1677841587
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35923,7 +35933,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameOver: {fileID: 1677841585}
-  startTime: 2
+  startTime: 120
   victimIsAlive: 1
   victimAboard: 0
   timer: {fileID: 1042287014}

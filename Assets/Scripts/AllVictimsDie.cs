@@ -26,7 +26,7 @@ public class AllVictimsDie : MonoBehaviour
     {
         allVictimsAreDead = true;
         foreach (GameObject victim in victims) {
-            if (victim.GetComponent<CountDown>().victimIsAlive) allVictimsAreDead = false;
+            if (victim.GetComponent<CountDown>().victimIsAlive && victim.activeSelf) allVictimsAreDead = false;
         }
         if (allVictimsAreDead) gameIsOver();
     }
