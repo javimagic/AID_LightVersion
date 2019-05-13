@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WindInfo : MonoBehaviour
 {
-    public float meanWindForce = 3f;
+    public float meanWindForce = 80f;
     public Vector3 meanWindDir = new Vector3(1f, 0f, 0f);
     public float windForce;
     public Vector3 windDir;
@@ -15,6 +15,15 @@ public class WindInfo : MonoBehaviour
     void Start()
     {
         meanWindDir = Vector3.Normalize(meanWindDir);
+        if (PlayerPrefs.GetInt("WindEnabled") == 1) {
+            switch (PlayerPrefs.GetInt("Difficulty")) {
+                case 1: meanWindForce = 70f; break;
+                case 2: meanWindForce = 90f; break;
+                case 3: meanWindForce = 130f; break;
+            }
+            meanWindForce *= PlayerPrefs.GetFloat("WindForce");
+        }
+        else meanWindForce = 0f;
     }
 
     // Update is called once per frame

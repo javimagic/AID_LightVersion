@@ -12,6 +12,7 @@ public class OptionsMenuNew : MonoBehaviour {
 	public GameObject shadowhightext;
 	public GameObject shadowhightextLINE;
     public GameObject ShowMiniMapToggle;
+    public Toggle windToggle;
     public GameObject tooltipstext;
     public int dificultad;
     public GameObject difficultyfaciltext;
@@ -41,10 +42,10 @@ public class OptionsMenuNew : MonoBehaviour {
 
 
 	// sliders
-	public GameObject MusicSlider;
-	public GameObject sensitivityXSlider;
-	public GameObject sensitivityYSlider;
-	public GameObject mouseSmoothSlider;
+	public GameObject windSlider;
+	public GameObject sensHeliSlider;
+	public GameObject sensDronLSlider;
+	public GameObject sensDronRSlider;
 
 	private float sliderValue = 0.0f;
 	private float sliderValueXSensitivity = 0.0f;
@@ -54,6 +55,9 @@ public class OptionsMenuNew : MonoBehaviour {
 	public void  Start (){
         // check difficulty
         dificultad = PlayerPrefs.GetInt("Difficulty");
+        PlayerPrefs.SetFloat("SensHeli", 1);
+        PlayerPrefs.SetFloat("SensDronL", 1);
+        PlayerPrefs.SetFloat("SensDronR", 1);
 
 
         if (PlayerPrefs.GetInt("Difficulty") == 1)
@@ -90,11 +94,14 @@ public class OptionsMenuNew : MonoBehaviour {
             // nubeWeathertextLINE.enabled = true;
         }
 
-        // check slider values
-        MusicSlider.GetComponent<Slider>().value = PlayerPrefs.GetFloat("MusicVolume");
-		sensitivityXSlider.GetComponent<Slider>().value = PlayerPrefs.GetFloat("XSensitivity");
-		sensitivityYSlider.GetComponent<Slider>().value = PlayerPrefs.GetFloat("YSensitivity");
-		mouseSmoothSlider.GetComponent<Slider>().value = PlayerPrefs.GetFloat("MouseSmoothing");
+        // check sliders values
+        PlayerPrefs.SetFloat("WindForce", windSlider.GetComponent<Slider>().value);
+		sensHeliSlider.GetComponent<Slider>().value = PlayerPrefs.GetFloat("SensHeli");
+        sensDronLSlider.GetComponent<Slider>().value = PlayerPrefs.GetFloat("SensDronL");
+        sensDronRSlider.GetComponent<Slider>().value = PlayerPrefs.GetFloat("SensDronR");
+
+        PlayerPrefs.SetInt("WindEnabled", (windToggle.isOn)? 1 : 0);
+        // Debug.Log("Wind is on: " + PlayerPrefs.GetInt("WindEnabled"));
 
         /*
         // check full screen
@@ -246,26 +253,42 @@ public class OptionsMenuNew : MonoBehaviour {
 
 	public void  Update (){
         // Debug.Log(PlayerPrefs.GetInt("AAA"));
-		sliderValue = MusicSlider.GetComponent<Slider>().value;
-		sliderValueXSensitivity = sensitivityXSlider.GetComponent<Slider>().value;
-		sliderValueYSensitivity = sensitivityYSlider.GetComponent<Slider>().value;
-		sliderValueSmoothing = mouseSmoothSlider.GetComponent<Slider>().value;
+        /*
+        Debug.Log(
+            "H_Sens = " + PlayerPrefs.GetFloat("SensHeli") +
+            ". DronL_Sens = " + PlayerPrefs.GetFloat("SensDronL") +
+            ". DronR_Sens = " + PlayerPrefs.GetFloat("SensDronR")
+            );
+        */
+        // sliderValue = windSlider.GetComponent<Slider>().value;
+		// sliderValueXSensitivity = sensitivityXSlider.GetComponent<Slider>().value;
+		// sliderValueYSensitivity = sensitivityYSlider.GetComponent<Slider>().value;
+		// sliderValueSmoothing = mouseSmoothSlider.GetComponent<Slider>().value;
     }
    
 
-	public void musicSlider (float value){
-		PlayerPrefs.SetFloat("MusicVolume", value);
+	public void windSliderChange (float value){
+        PlayerPrefs.SetFloat("WindForce", windSlider.GetComponent<Slider>().value);
+        Debug.Log("Wind force now set to " + PlayerPrefs.GetFloat("WindForce"));
 	}
 
-	public void  SensitivityXSlider (){
-		PlayerPrefs.SetFloat("XSensitivity", sliderValueXSensitivity);
-	}
+	public void  sensHeliSliderChange (){
+		PlayerPrefs.SetFloat("SensHeli", sensHeliSlider.GetComponent<Slider>().value);
+        // Debug.Log("SensHeli now set to " + PlayerPrefs.GetFloat("SensHeli"));
+    }
 
-	public void  SensitivityYSlider (){
-		PlayerPrefs.SetFloat("YSensitivity", sliderValueYSensitivity);
-	}
+    public void sensDronLSliderChange() {
+        PlayerPrefs.SetFloat("SensDronL", sensDronLSlider.GetComponent<Slider>().value);
+        // Debug.Log("SensDronL now set to " + PlayerPrefs.GetFloat("SensDronL"));
+    }
 
-	public void  SensitivitySmoothing (){
+    public void sensDronRSliderChange() {
+        PlayerPrefs.SetFloat("SensDronR", sensDronRSlider.GetComponent<Slider>().value);
+        // Debug.Log("SensDronR now set to " + PlayerPrefs.GetFloat("SensDronR"));
+    }
+
+
+    public void  SensitivitySmoothing (){
 		PlayerPrefs.SetFloat("MouseSmoothing", sliderValueSmoothing);
 		Debug.Log(PlayerPrefs.GetFloat("MouseSmoothing"));
 	}
@@ -281,8 +304,22 @@ public class OptionsMenuNew : MonoBehaviour {
 		}
 	}
 
-	// show tool tips like: 'How to Play' control pop ups
-	public void  ToolTips (){
+    public void enableWind (bool value)
+    {
+        Debug.Log(PlayerPrefs.GetFloat("WindForce"));
+        if (value)
+        {
+            PlayerPrefs.SetInt("WindEnabled", 1);
+        }
+        else
+        {
+            PlayerPrefs.SetInt("WindEnabled", 0);
+
+        }
+    }
+
+    // show tool tips like: 'How to Play' control pop ups
+    public void  ToolTips (){
 		if(PlayerPrefs.GetInt("ToolTips")==0){
 			PlayerPrefs.SetInt("ToolTips",1);
 		//tooltipstext.GetComponent<Text>().text = "on";

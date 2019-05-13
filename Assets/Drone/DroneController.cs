@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DroneController : MonoBehaviour {
+    public bool droneActive = false;
     public float ForwardForce = 3f;
     public float SidewaysForce = 3f;
     public float UpwardsForce = 3f;
@@ -11,33 +12,46 @@ public class DroneController : MonoBehaviour {
     public float perturbationForce = 1.0f;
     public float inverseInertia = 3f;
     public float noiseFrec = 2.5f;
-    public float noiseMoveConst = 5f;
+    public float noiseMoveConst = 2f;
 
     private float desfY, desfZ;
+    private float sensL, sensR;
     
     private float moveSideways = 0.0f, moveUpwards = 0.0f, moveForward = 0.0f, rotateDrone = 0.0f;
     
     void Start () {
         desfY = Random.Range(0f, 2 * Mathf.PI);
         desfZ = Random.Range(0f, 2 * Mathf.PI);
+        sensL = PlayerPrefs.GetFloat("SensDronL");
+        sensR = PlayerPrefs.GetFloat("SensDronR");
     }
 	
 	void FixedUpdate () {
 
-        float leftHorizontal = Input.GetAxis("Horizontal");
-        float leftVertical = Input.GetAxis("Vertical");
-        float rightHorizontal = Input.GetAxis("PS4_RightAnalogHoriz");
-        float rightVertical = Input.GetAxis("PS4_RightAnalogVert");
+        float leftHorizontal = (droneActive)? Input.GetAxis("Horizontal") : 0f;
+        float leftVertical = (droneActive) ? Input.GetAxis("Vertical") : 0f;
+        float rightHorizontal = (droneActive) ? Input.GetAxis("PS4_RightAnalogHoriz") : 0f;
+        float rightVertical = (droneActive) ? Input.GetAxis("PS4_RightAnalogVert") : 0f;
+        /*
+        Debug.Log(
+            "H_Sens = " + PlayerPrefs.GetFloat("SensHeli") +
+            ". DronL_Sens = " + PlayerPrefs.GetFloat("SensDronL") +
+            ". DronR_Sens = " + PlayerPrefs.GetFloat("SensDronR")
+            );
+        */
 
         Vector3 noiseMove = noiseMoveConst * new Vector3(Mathf.Sin(noiseFrec * Time.time * 1.3f), Mathf.Sin(noiseFrec * Time.time + desfY), Mathf.Sin(noiseFrec * Time.time * 1.8f + desfZ));
-
-
-
-        moveSideways = Mathf.Lerp(moveSideways, leftHorizontal, Time.fixedDeltaTime * inverseInertia) + noiseMove.z * 0.001f;
-        moveForward = Mathf.Lerp(moveForward, leftVertical, Time.fixedDeltaTime * inverseInertia) + noiseMove.x * 0.001f;
-        moveUpwards = Mathf.Lerp(moveUpwards, rightVertical * -10f, Time.fixedDeltaTime * inverseInertia) + noiseMove.y * 0.001f;
-        rotateDrone = Mathf.Lerp(rotateDrone, rightHorizontal * -10f, Time.fixedDeltaTime * inverseInertia);
         
+
+        moveSideways = Mathf.Lerp(moveSideways, sensL * leftHorizontal, Time.fixedDeltaTime * inverseInertia) + noiseMove.z * 0.001f;
+        moveForward = Mathf.Lerp(moveForward, sensL * leftVertical, Time.fixedDeltaTime * inverseInertia) + noiseMove.x * 0.001f;
+        moveUpwards = Mathf.Lerp(moveUpwards, sensR * rightVertical * -10f, Time.fixedDeltaTime * inverseInertia) + noiseMove.y * 0.001f;
+        rotateDrone = Mathf.Lerp(rotateDrone, sensR * rightHorizontal * -10f, Time.fixedDeltaTime * inverseInertia);
+
+        moveSideways = Mathf.Clamp(moveSideways, -1, 1);
+        moveForward = Mathf.Clamp(moveForward, -1, 1);
+        moveUpwards = Mathf.Clamp(moveUpwards, -1, 1);
+
         GetComponent<Rigidbody>().velocity = (
             Vector3.ProjectOnPlane(transform.right,Vector3.up) * SidewaysForce * moveSideways +
             transform.up * UpwardsForce * moveUpwards +

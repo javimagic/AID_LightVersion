@@ -23,19 +23,19 @@ public class CamControl : MonoBehaviour
     {
         if (GameObject.Find("Player"))
         {
-            if (Input.GetKeyDown("1"))
+            if (Input.GetKeyDown("1") || Input.GetAxis("Flechas_Horiz") == -1)
             {
                 camera1.enabled = true;
                 camera2.enabled = false;
                 camera3.enabled = false;
             }
-            if (Input.GetKeyDown("2"))
+            if (Input.GetKeyDown("2") || Input.GetAxis("Flechas_Vert") == 1)
             {
                 camera1.enabled = false;
                 camera2.enabled = true;
                 camera3.enabled = false;
             }
-            if (Input.GetKeyDown("3"))
+            if (Input.GetKeyDown("3") || Input.GetAxis("Flechas_Vert") == -1)
             {
                 camera1.enabled = false;
                 camera2.enabled = false;

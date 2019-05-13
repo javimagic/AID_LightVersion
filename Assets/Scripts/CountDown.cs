@@ -10,13 +10,16 @@ public class CountDown : MonoBehaviour
     public bool victimIsAlive = true;
     public bool victimAboard = false;
     public GameObject timer;
+    public float timeGainedWhenCalmed;
     private Text timeLabel;
     private float counter;
     private bool shouldCount = true;
+    private bool victimIsCalmed = false;
 
     void Start() {
         counter = startTime;
         timeLabel = timer.transform.Find("Text").gameObject.GetComponent<Text>();
+        victimIsCalmed = false;
     }
 
     public void victimDies() {
@@ -24,13 +27,22 @@ public class CountDown : MonoBehaviour
         victimIsAlive = false;
         shouldCount = false;
         timer.GetComponent<Image>().color = new Color(1f, 0f, 0f);
-        gameOver.gameOverText = "Víctima fallecida";
-        gameOver.enabled = true;
     }
 
     public void victimGoesIn() {
         victimAboard = true;
         timer.GetComponent<Image>().color = new Color(0f, 1f, 0f);
+    }
+
+    public void stopRunning() {
+        shouldCount = false;
+    }
+
+    public void victimCalmed() {
+        if (!victimIsCalmed) {
+            victimIsCalmed = true;
+            counter += timeGainedWhenCalmed;
+        }
     }
 
     void FixedUpdate() {

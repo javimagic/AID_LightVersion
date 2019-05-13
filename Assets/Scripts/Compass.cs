@@ -3,11 +3,30 @@ using UnityEngine;
 public class Compass : MonoBehaviour
 {
     public RawImage CompassImage;
-    public Transform Player;
+    public Transform Player1;
+    public Transform Player2;
+    public ControlChanger changer;
+    private Transform Player;
     public Text CompassDirectionText;
+    
+
+    void changePlayer()
+    {
+        if (changer.droneCompass)
+        {
+            Player = Player2;
+        } else
+        {
+            Player = Player1;
+        }
+    }
+
+    
 
     public void Update()
     {
+        changePlayer();
+
         //Get a handle on the Image's uvRect
         CompassImage.uvRect = new Rect(Player.localEulerAngles.y / 360, 0, 1, 1);
 

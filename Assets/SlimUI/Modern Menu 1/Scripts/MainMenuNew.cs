@@ -8,6 +8,8 @@ public class MainMenuNew : MonoBehaviour {
 	Animator CameraObject;
 
     public Button playBtn;
+    public Button exitBtn;
+    public Button noBtn;
     public Button gameBtn;
 
 	[Header("Loaded Scene")]
@@ -111,6 +113,7 @@ public class MainMenuNew : MonoBehaviour {
 	public void  Position2 (){
 		DisablePlayCampaign();
 		CameraObject.SetFloat("Animate",1);
+        PanelareYouSure.gameObject.SetActive(false);
         gameBtn.Select();
 	}
 
@@ -213,10 +216,12 @@ public class MainMenuNew : MonoBehaviour {
 	public void  AreYouSure (){
 		PanelareYouSure.gameObject.SetActive(true);
 		DisablePlayCampaign();
+        noBtn.Select();
 	}
 
 	public void  No (){
 		PanelareYouSure.gameObject.SetActive(false);
+        exitBtn.Select();
 	}
 
 	public void  Yes (){

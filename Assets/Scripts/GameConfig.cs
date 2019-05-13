@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GameConfig : MonoBehaviour {
-    static public int difficulty = 2;
-    static public int weather = 1;
+    public Light ambientLight;
 
 	// Use this for initialization
 	void Start () {
-		
+        ambientLight.intensity = (PlayerPrefs.GetInt("Weather") == 1) ? 1f : 0.3f;
 	}
 	
 	// Update is called once per frame

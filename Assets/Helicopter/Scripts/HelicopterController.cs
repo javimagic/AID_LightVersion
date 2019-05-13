@@ -9,15 +9,17 @@ public class HelicopterController : MonoBehaviour
     public Rigidbody HelicopterModel;
     public HeliRotorController MainRotorController;
     public HeliRotorController SubRotorController;
-    public VictimInteractionBoundary victimBoundary;
     public ControlChanger changer;
-    public GameObject victim;
+    public GameObject victim1;
+    public GameObject victim2;
+    public GameObject victim3;
     public bool controllingThisHelicopter = true;
     public bool helicopterIsAlive = true;
     public float autoStability = 0.4f;
     public float PID_P = 1f;
     public float PID_I = 1f;
     public float PID_D = 1f;
+    public float airResistanceCoef =  0.03f;
     private float error = 0f, lastError = 0f, sumErrors = 0f;
     private bool wasControllingHeli = true;
     public PauseMenu pauseMenu;
@@ -40,7 +42,13 @@ public class HelicopterController : MonoBehaviour
     private Vector2 hMove = Vector2.zero;
     private float stdVolume;
 
-    private CountDown timer;
+    private CountDown timer1;
+    private CountDown timer2;
+    private CountDown timer3;
+    private VictimInteractionBoundary victim1Boundary;
+    private VictimInteractionBoundary victim2Boundary;
+    private VictimInteractionBoundary victim3Boundary;
+    private float sensitivity;
 
     /*
     public float EngineForce
@@ -73,16 +81,22 @@ public class HelicopterController : MonoBehaviour
     // Use this for initialization
 	void Start ()
 	{
-        timer = victim.GetComponent<CountDown>();
+        timer1 = victim1.GetComponent<CountDown>();
+        timer2 = victim2.GetComponent<CountDown>();
+        timer3 = victim3.GetComponent<CountDown>();
+        victim1Boundary = victim1.transform.Find("Zone2Boundary").GetComponent<VictimInteractionBoundary>();
+        victim2Boundary = victim2.transform.Find("Zone2Boundary").GetComponent<VictimInteractionBoundary>();
+        victim3Boundary = victim3.transform.Find("Zone2Boundary").GetComponent<VictimInteractionBoundary>();
         EngineForce = 0f;
         controllingThisHelicopter = true;
         stdVolume = HelicopterSound.volume;
+        sensitivity = PlayerPrefs.GetFloat("SensHeli");
     }
 
     void useControls ()
     {
-        float moveHorizontal = Input.GetAxis("Horizontal");
-        float moveVertical = Input.GetAxis("Vertical");
+        float moveHorizontal = Mathf.Clamp(Input.GetAxis("Horizontal") * sensitivity, -1, 1);
+        float moveVertical = Mathf.Clamp(Input.GetAxis("Vertical") * sensitivity, -1, 1);
         float throttle = Input.GetAxis("PS4_R2");
         // float throttle = 0.1f; // provisional, porque no va hoy el mando
         bool turnright = Input.GetButton("PS4_R1");
@@ -104,11 +118,23 @@ public class HelicopterController : MonoBehaviour
         }
         if (interaction)
         {
-            if (victimBoundary.playerNearby && timer.victimIsAlive)
+            if (victim1Boundary.playerNearby && timer1.victimIsAlive && !timer1.victimAboard)
             {
                 // Debug.Log("Rescued!!!");
-                timer.victimGoesIn();
-                Destroy(victim.transform.Find("Person").gameObject);
+                timer1.victimGoesIn();
+                Destroy(victim1.transform.Find("Person").gameObject);
+            }
+            if (victim2Boundary.playerNearby && timer2.victimIsAlive && !timer2.victimAboard)
+            {
+                // Debug.Log("Rescued!!!");
+                timer2.victimGoesIn();
+                Destroy(victim2.transform.Find("Person").gameObject);
+            }
+            if (victim3Boundary.playerNearby && timer3.victimIsAlive && !timer3.victimAboard)
+            {
+                // Debug.Log("Rescued!!!");
+                timer3.victimGoesIn();
+                Destroy(victim3.transform.Find("Person").gameObject);
             }
         }
     }
@@ -167,6 +193,7 @@ public class HelicopterController : MonoBehaviour
         LiftProcess();
         MoveProcess();
         TiltProcess();
+        airResistance();
         if (Input.GetButton("PS4_PSN"))
         {
             SceneManager.LoadScene("AIDS_Menu");
@@ -174,14 +201,26 @@ public class HelicopterController : MonoBehaviour
 
     }
   
+    private void airResistance()
+    {
+        float speedY = gameObject.GetComponent<Rigidbody>().velocity.y;
+        float extraEngineForce;
+        if (speedY < 0)
+        {
+            extraEngineForce = Mathf.Abs(Mathf.Pow(speedY * airResistanceCoef, 2));
+            EngineForce += extraEngineForce;
+            EngineForce = Mathf.Clamp(EngineForce, 0f, maxEngineForce);
+        }
+    }
+
     
-    private float PID (float target, float actual) {
+    private float PID (float target, float current) {
         float correction;
         lastError = error;
-        error = target - actual;
+        error = target - current;
         sumErrors += error;
         
-        correction = PID_P * (actual - target);
+        correction = PID_P * (current - target);
         correction -= PID_I * sumErrors;
         correction -= PID_D * (error - lastError);
         // Debug.Log("P = " + PID_P * (actual - target) + "; I = " + -PID_I * sumErrors + "; D = " + -PID_D * (error - lastError));

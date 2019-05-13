@@ -5,6 +5,7 @@ public class FollowTargetCamera : MonoBehaviour
     public Transform Target;
     public float PositionFolowForce = 5f;
     public float RotationFolowForce = 5f;
+    public float camSensitivity = 300f;
 	void Start ()
 	{
 
@@ -19,6 +20,7 @@ public class FollowTargetCamera : MonoBehaviour
 
         transform.position = Vector3.Lerp(transform.position, Target.position, PositionFolowForce * Time.deltaTime);
         transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(vector), RotationFolowForce * Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, transform.rotation * Quaternion.Euler(Input.GetAxis("PS4_RightAnalogVert") * camSensitivity, Input.GetAxis("PS4_RightAnalogHoriz") * camSensitivity, 0f), RotationFolowForce * Time.deltaTime);
 	}
 }
 

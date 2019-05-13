@@ -12,6 +12,7 @@ public class ControlChanger : MonoBehaviour
     public GameObject victimReckon;
     public float lastHeight;
     public bool controllingHeli = true;
+    public bool droneCompass = false;
     private bool victimDetected = false;
     private bool insideAproxZone = false;
     private Vector3 offset;
@@ -19,11 +20,13 @@ public class ControlChanger : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        drone.GetComponent<DroneController>().enabled = false;
+        // drone.GetComponent<DroneController>().enabled = false;
+        drone.GetComponent<DroneController>().droneActive = false;
         droneCam.enabled = false;
         drone.SetActive(false);
         offset = drone.transform.position - helicopter.transform.position;
-    }
+        droneCompass = false;
+}
 
     // Update is called once per frame
 
@@ -41,20 +44,24 @@ public class ControlChanger : MonoBehaviour
                 );
         }
         drone.SetActive(true);
-        drone.GetComponent<DroneController>().enabled = true;
+        // drone.GetComponent<DroneController>().enabled = true;
+        drone.GetComponent<DroneController>().droneActive = true;
         heliCam.enabled = false;
         droneCam.enabled = true;
         controllingHeli = false;
+        droneCompass = true;
         return;
     }
 
     void controlHelicopter()
     {
         helicopter.GetComponent<HelicopterController>().controllingThisHelicopter = true;
-        drone.GetComponent<DroneController>().enabled = false;
+        // drone.GetComponent<DroneController>().enabled = false;
+        drone.GetComponent<DroneController>().droneActive = false;
         heliCam.enabled = true;
         droneCam.enabled = false;
         controllingHeli = true;
+        droneCompass = false;
         return;
     }
 
