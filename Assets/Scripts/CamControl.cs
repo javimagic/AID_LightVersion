@@ -21,26 +21,20 @@ public class CamControl : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (GameObject.Find("Player"))
-        {
-            if (Input.GetKeyDown("1") || Input.GetAxis("Flechas_Horiz") == -1)
-            {
-                camera1.enabled = true;
-                camera2.enabled = false;
-                camera3.enabled = false;
-            }
-            if (Input.GetKeyDown("2") || Input.GetAxis("Flechas_Vert") == 1)
-            {
-                camera1.enabled = false;
-                camera2.enabled = true;
-                camera3.enabled = false;
-            }
-            if (Input.GetKeyDown("3") || Input.GetAxis("Flechas_Vert") == -1)
-            {
-                camera1.enabled = false;
-                camera2.enabled = false;
-                camera3.enabled = true;
-            }
+        if (Input.GetKeyDown("1") || Input.GetAxis("Flechas_Horiz") == -1) {
+            camera1.enabled = true;
+            camera2.enabled = false;
+            camera3.enabled = false;
+        }
+        if (Input.GetKeyDown("2") || Input.GetAxis("Flechas_Vert") == 1) {
+            camera1.enabled = false;
+            camera2.enabled = true;
+            camera3.enabled = false;
+        }
+        if (Input.GetKeyDown("3") || Input.GetAxis("Flechas_Vert") == -1) {
+            camera1.enabled = false;
+            camera2.enabled = false;
+            camera3.enabled = true;
         }
         /*
         else

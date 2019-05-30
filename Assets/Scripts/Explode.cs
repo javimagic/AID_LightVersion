@@ -9,7 +9,7 @@ public class Explode : MonoBehaviour
     public HelicopterController heliController;
     public GameObject followCamera;
     public GameObject explosionCamera;
-    public GameObject explosion;
+    public GameObject fire;
     public HasExplodedFlag flag;
     public float explosionSize = 2;
 
@@ -23,14 +23,15 @@ public class Explode : MonoBehaviour
     
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag != "Drone" && other.tag != "VictimArea" && other.tag != "VictimReckon")
+        if (other.tag != "Drone" && other.tag != "VictimArea" && other.tag != "VictimReckon" && other.tag != "Player")
         {
             // Destroy(targetToDestroy);
             heliController.helicopterIsAlive = false;
-            followCamera.GetComponent<FollowTargetCamera>().enabled = false;
-            explosionCamera.GetComponent<ExplosionCamera>().enabled = false;
-            GameObject instantiatedExplosion = Instantiate(explosion, transform.position, transform.rotation);
-            instantiatedExplosion.transform.localScale = new Vector3(1f, 1f, 1f) * explosionSize;
+            // followCamera.GetComponent<FollowTargetCamera>().enabled = false;
+            // explosionCamera.GetComponent<ExplosionCamera>().enabled = false;
+            // GameObject instantiatedExplosion = Instantiate(explosion, transform.position, transform.rotation);
+            // instantiatedExplosion.transform.localScale = new Vector3(1f, 1f, 1f) * explosionSize;
+            fire.SetActive(true);
             flag.hasExploded = true;
             gameOver.gameOverText = "Vehículo destruido";
             gameOver.enabled = true;

@@ -29,7 +29,8 @@ public class HelicopterController : MonoBehaviour
     public float upwardsPowerForce = 2.0f;
     // public float ForwardTiltForce = 20f;
     public float TurnTiltForce = 30f;
-    public float coef_userTilt = 150.0f;
+    public float coef_userTiltX = 150.0f;
+    public float coef_userTiltZ = 150.0f;
     public float EffectiveHeight =  100f;
 
     public float turnTiltForcePercent = 1.5f;
@@ -38,6 +39,10 @@ public class HelicopterController : MonoBehaviour
     private float _engineForce;
     public float maxEngineForce = 30;
     public float EngineForce = 0f;
+
+    public float stabilityForce = 150f;
+    public float stabilityTorqueX = 5.0f;
+    public float stabilityTorqueZ = 10.0f;
 
     private Vector2 hMove = Vector2.zero;
     private float stdVolume;
@@ -145,9 +150,6 @@ public class HelicopterController : MonoBehaviour
     }
 
     void FixedUpdate () {
-        float stabilityTorqueX = 5.0f;
-        float stabilityTorqueZ = 10.0f;
-        float stabilityForce = 150f;
         float xAng, zAng;
 
         if (!helicopterIsAlive) return;
@@ -247,7 +249,7 @@ public class HelicopterController : MonoBehaviour
     private void TiltProcess()
     {
         
-        HelicopterModel.AddRelativeTorque(coef_userTilt * new Vector3(hMove.y, 0.0f, -hMove.x) * EngineForce / maxEngineForce);
+        HelicopterModel.AddRelativeTorque(new Vector3(coef_userTiltX * hMove.y, 0.0f, coef_userTiltZ * -hMove.x) * EngineForce / maxEngineForce);
     }
     
     private void OnCollisionEnter()

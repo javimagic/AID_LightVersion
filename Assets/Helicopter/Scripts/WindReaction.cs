@@ -20,7 +20,7 @@ public class WindReaction : MonoBehaviour
         Ray positWindRay = new Ray(transform.position, globalWind.windDir);
         Physics.Raycast(positWindRay, out positHit);
 
-        Vector3 heliPos = GameObject.Find("Player").transform.position;
+        Vector3 heliPos = GameObject.Find("HelicopterAmbulance").transform.position;
         GetComponent<Rigidbody>().AddForceAtPosition(globalWind.windDir * globalWind.windForce, transform.position + transform.forward * windOffset);
     }
 }
